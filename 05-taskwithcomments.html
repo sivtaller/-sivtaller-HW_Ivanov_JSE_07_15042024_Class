@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Report Generator</title>
+    <style>
+        .report-block {
+            border: 1px solid green;
+            background-color: #00800049;
+            margin: 10px;
+            padding: 10px;
+        }
+        p {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <button id="generateReport">Создать отчет</button>
+    <div id="output"></div>
+
+    <template id="monthReport">
+        <div class="report-block">
+            <p>Месяц: {{month}}</p>
+            <p>Сумма: {{amount}}</p>
+            <ul>
+                {{#users}}
+                <li>{{.}}</li> <!-- . означает текущий элемент массива users -->
+                {{/users}}
+            </ul>
+        </div>
+    </template>
+
+    <script src="mustache.min.js"></script>
+    <script>
+        // Определение класса MonthReport для хранения данных о месяце, сумме и пользователях
+        class MonthReport {
+            constructor(month, amount, users = []) {
+                this.month = month;
+                this.amount = amount;
+                this.users = users;
+            }
+
+            // Метод render генерирует HTML из шаблона и добавляет его в DOM
+            render(container) {
+                const template = document.querySelector('#monthReport').innerHTML;
+                const renderedHtml = Mustache.render(template, this);
+                container.insertAdjacentHTML('beforeend', renderedHtml);
+            }
+        }
+
+        // Создание массива экземпляров MonthReport с начальными данными
+        const reports = [
+            new MonthReport("Январь", 200, ["Claudia Contreras", "Blair Hayden", "Montgomery Cohen"]),
+            new MonthReport("Февраль", 140, ["Ariana Finch", "Jules Winnfield"]),
+            new MonthReport("Март", 115, ["Blair Hayden", "Montgomery Cohen"])
+        ];
+
+        // Обработчик клика для кнопки, который рендерит все отчеты в контейнер output
+        document.querySelector('button').addEventListener('click', function() {
+            const outputContainer = document.getElementById('output');
+            outputContainer.innerHTML = ''; // Очистка предыдущего вывода
+            reports.forEach(report => report.render(outputContainer));
+        });
+    </script>
+</body>
+</html>
